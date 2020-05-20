@@ -1,7 +1,11 @@
 package oleh.bilyk.spring;
 
+import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
 /**
  * #Summary:
  * #Author: Oleh_Bilyk
@@ -10,6 +14,12 @@ import org.springframework.context.annotation.Configuration;
  * #Comments:
  */
 @Configuration
-@ComponentScan(basePackages = "org.example.tests")
+@ComponentScan(basePackages = "oleh.bilyk")
+@PropertySource("classpath:project.properties")
 public class ApplicationConfig {
+    @Bean
+    public Logger log(){
+        return Logger.getLogger("mylog");
+    }
+
 }

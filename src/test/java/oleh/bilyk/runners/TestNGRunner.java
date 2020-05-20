@@ -13,7 +13,7 @@ import org.testng.annotations.DataProvider;
  */
 @CucumberOptions(
         features = {"src/test/resources/cucumber/"},
-        glue = "org.examples.tests",
+        glue = "oleh.bilyk.tests",
         strict = true
         )
 

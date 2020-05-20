@@ -1,15 +1,13 @@
 package oleh.bilyk.pages;
 
 import io.qameta.allure.Step;
-import oleh.bilyk.helpers.Config;
-import oleh.bilyk.pages.submenus.ColumnBarChartSubmenu;
-import oleh.bilyk.pages.submenus.LineChartSubmenu;
-import oleh.bilyk.pages.submenus.PieChartSubmenu;
-import oleh.bilyk.webDriver.Driver;
+import oleh.bilyk.webDriver.DriverManager;
 import oleh.bilyk.webDriver.DriverWaiter;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
-
-import static oleh.bilyk.webDriver.Driver.log;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * #Summary:
@@ -18,17 +16,23 @@ import static oleh.bilyk.webDriver.Driver.log;
  * #Creation Date: 22/04/2020
  * #Comments:
  */
+@Component
 public class MainPage {
-    private static final By LINE_CHARTS_ITEM = By.xpath("//span[.='Line charts']");
-    private static final By AREA_CHARTS_ITEM = By.xpath("//span[.='Area charts']");
-    private static final By COLUMN_BAR_CHARTS_ITEM = By.xpath("//span[.='Column and bar charts']");
-    private static final By PIE_CHARTS_ITEM = By.xpath("//span[.='Pie charts']");
-    private static final By BASIC_LINE_ITEM = By.cssSelector("[href='\\/demo\\/line-basic']");
+    @Value("${base.url}")
+    private String baseUrl;
+    @Autowired
+    private DriverManager driverManager;
+    @Autowired
+    private DriverWaiter driverWaiter;
+    @Autowired
+    private Logger log;
+    private static final By BUTTON_SIGN_IN = By.cssSelector(".HeaderMenu-link.mr-3.no-underline");
 
-    public MainPage() {
+
+    public void invoke() {
         if (!verify()) {
-            Driver.getDriver().navigate().to(Config.getInstance().BASE_HOST());
-            new DriverWaiter().waitForElementDisplayed(LINE_CHARTS_ITEM);
+            driverManager.getDriver().navigate().to(baseUrl);
+            driverWaiter.waitForElementDisplayed(BUTTON_SIGN_IN);
         }
     }
 
@@ -36,8 +40,7 @@ public class MainPage {
     @Step("Verify that Main page is loaded")
     public boolean verify() {
         try {
-            return Driver.getDriver().findElement(LINE_CHARTS_ITEM).isDisplayed()
-                    && Driver.getDriver().findElement(AREA_CHARTS_ITEM).isDisplayed();
+            return driverManager.getDriver().findElement(BUTTON_SIGN_IN).isDisplayed();
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -46,36 +49,7 @@ public class MainPage {
 
     @Step("Wait until leave the Main page")
     public void waitUntilLeave() {
-        new DriverWaiter().waitForElementIsNotDisplayed(BASIC_LINE_ITEM, 1000);
-    }
-
-    @Step
-    public LineChartSubmenu openLineCharts() {
-        if (!Driver.getDriver().findElement(LINE_CHARTS_ITEM).isDisplayed()) {
-            throw new IllegalStateException("Control is not displayed");
-        }
-        Driver.getDriver().findElement(LINE_CHARTS_ITEM).click();
-        return new LineChartSubmenu();
-    }
-
-    @Step
-    public ColumnBarChartSubmenu openColumnBarChartSubmenu() {
-        if (!Driver.getDriver().findElement(COLUMN_BAR_CHARTS_ITEM).isDisplayed()) {
-            throw new IllegalStateException("Control is not displayed");
-        }
-        Driver.getDriver().findElement(COLUMN_BAR_CHARTS_ITEM).click();
-        waitUntilLeave();
-        return new ColumnBarChartSubmenu();
-    }
-
-    @Step
-    public PieChartSubmenu openPieChartSubmenu() {
-        if (!Driver.getDriver().findElement(PIE_CHARTS_ITEM).isDisplayed()) {
-            throw new IllegalStateException("Control is not displayed");
-        }
-        Driver.getDriver().findElement(PIE_CHARTS_ITEM).click();
-        waitUntilLeave();
-        return new PieChartSubmenu();
+        driverWaiter.waitForElementIsNotDisplayed(BUTTON_SIGN_IN, 1000);
     }
     //</editor-fold>
 }

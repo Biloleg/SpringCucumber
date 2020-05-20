@@ -3,14 +3,15 @@ package oleh.bilyk.webDriver;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-
-import static oleh.bilyk.webDriver.Driver.getDriver;
-import static oleh.bilyk.webDriver.Driver.log;
+import org.apache.log4j.Logger;
 
 /**
  * #Summary:
@@ -19,7 +20,13 @@ import static oleh.bilyk.webDriver.Driver.log;
  * #Creation Date: 20/05/2020
  * #Comments:
  */
+@Component
 public class DriverWaiter {
+    @Autowired
+    private DriverManager driverManager;
+    @Autowired
+    private Logger log;
+    @Value("${default.polling.interval}")
     private long pollingInterval;
 
     //<editor-fold desc="Public methods">
@@ -49,7 +56,7 @@ public class DriverWaiter {
     public void waitForElementDisplayed(final By element, final long... msToWait) {
         long msToWaitLoc = msToWait.length > 0 ? msToWait[0] : 10_000;
         waitForElementPresent(element, msToWaitLoc);
-        waitForElementDisplayed(getDriver().findElement(element), msToWaitLoc);
+        waitForElementDisplayed(driverManager.getDriver().findElement(element), msToWaitLoc);
     }
 
     public void waitForElementDisplayed(final WebElement element, final long... msToWait) {
@@ -124,7 +131,7 @@ public class DriverWaiter {
         long msToWaitLoc = msToWait.length > 0 ? msToWait[0] : 10_000;
         WebElement element = null;
         try {
-            element = (new WebDriverWait(getDriver(), msToWaitLoc)).
+            element = (new WebDriverWait(driverManager.getDriver(), msToWaitLoc)).
                     until(ExpectedConditions.visibilityOfElementLocated(by));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -138,7 +145,7 @@ public class DriverWaiter {
 
     public boolean waitUntilExpected(Function<WebDriver, Boolean> function, final long... msToWait) {
         long msToWaitLoc = msToWait.length > 0 ? msToWait[0] : 10_000;
-        WebDriverWait wait = new WebDriverWait(getDriver(), msToWaitLoc / 1000);
+        WebDriverWait wait = new WebDriverWait(driverManager.getDriver(), msToWaitLoc / 1000);
         wait.pollingEvery(Duration.of(pollingInterval, ChronoUnit.MILLIS));
         return wait.until(function);
     }
@@ -159,7 +166,7 @@ public class DriverWaiter {
 
     public void setImplicitlyWait(final long... msToWait) {
         final long msToWaitLoc = msToWait.length > 0 ? msToWait[0] : 3_000;
-        getDriver().manage().timeouts().implicitlyWait(msToWaitLoc, TimeUnit.MILLISECONDS);
+        driverManager.getDriver().manage().timeouts().implicitlyWait(msToWaitLoc, TimeUnit.MILLISECONDS);
     }
 
     public void changeTimeOutsAndWait(Waiter waiter, long implicitlyWait, long pollingInterval) {
