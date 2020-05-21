@@ -50,7 +50,7 @@ public class InitPage {
 
     @Step
     public void navigateToLoginPage() {
-        driverWaiter.waitForElementIsNotDisplayed(BUTTON_SIGN_IN, 1000);
+        driverManager.getDriver().findElement(BUTTON_SIGN_IN).click();
     }
 
     @Step("Wait until leave the Main page")

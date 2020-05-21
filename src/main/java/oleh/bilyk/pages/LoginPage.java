@@ -1,10 +1,13 @@
 package oleh.bilyk.pages;
 
 import io.qameta.allure.Step;
+import lombok.AllArgsConstructor;
+import oleh.bilyk.helpers.EnumHelper;
 import oleh.bilyk.webDriver.DriverManager;
 import oleh.bilyk.webDriver.DriverWaiter;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +31,34 @@ public class LoginPage {
     private static final By BUTTON_SIGN_IN = By.cssSelector(".btn-primary");
     private static final By LABEL_ERROR_MESSAGE = By.cssSelector(".container-lg.px-2");
 
+    //<editor-fold desc="Enums">
+    @AllArgsConstructor
+    public enum LoginPageElement {
+        USERNAME("Username", FIELD_USERNAME),
+        PASSWORD("Password", FIELD_PASSWORD),
+        SIGN_IN("Sign In", BUTTON_SIGN_IN),
+        ERROR_MESSAGE("Error message", LABEL_ERROR_MESSAGE);
+
+        private final String name;
+        private final By by;
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        public By getLocator() {
+            return by;
+        }
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Public Methods">
+    public WebElement getElement(String name) {
+        LoginPageElement loginPageElement = EnumHelper.valueOf(LoginPage.LoginPageElement.class, name);
+        return driverManager.getDriver().findElement(loginPageElement.getLocator());
+    }
+
     @Step("Type '{0}' to username field")
     public void fillUsernameField(String username) {
         driverManager.getDriver().findElement(FIELD_USERNAME).sendKeys(username);
@@ -45,14 +75,14 @@ public class LoginPage {
     }
 
     @Step
-    public boolean isLoginErrorMessagePresent() {
+    public boolean isLoginErrorMessageDisplayed() {
         return driverWaiter.isElementDisplayed(LABEL_ERROR_MESSAGE, 1000);
     }
 
     @Step
     public String getLoginErrorText() {
         driverWaiter.waitForElementDisplayed(LABEL_ERROR_MESSAGE, 1000);
-        return  driverManager.getDriver().findElement(LABEL_ERROR_MESSAGE).getText();
+        return driverManager.getDriver().findElement(LABEL_ERROR_MESSAGE).getText();
     }
 
     @Step("Verify that Login page is loaded")
