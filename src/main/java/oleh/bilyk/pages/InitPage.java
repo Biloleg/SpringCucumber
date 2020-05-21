@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  * #Comments:
  */
 @Component
-public class MainPage {
+public class InitPage {
     @Value("${base.url}")
     private String baseUrl;
     @Autowired

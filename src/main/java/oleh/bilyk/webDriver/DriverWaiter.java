@@ -30,6 +30,12 @@ public class DriverWaiter {
     private long pollingInterval;
 
     //<editor-fold desc="Public methods">
+    public boolean isElementDisplayed(final By element, final long... msToWait) {
+        final long msToWaitLoc = msToWait.length > 0 ? msToWait[0] : 10_000;
+        waitForElementDisplayed(element, msToWaitLoc);
+        return waitUntilExpected(driver -> driver.findElement(element).isDisplayed());
+    }
+
     public void waitForElementPresent(final By element, final long... msToWait) {
         final long msToWaitLoc = msToWait.length > 0 ? msToWait[0] : 10_000;
         try {
