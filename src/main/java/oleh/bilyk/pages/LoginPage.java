@@ -3,12 +3,11 @@ package oleh.bilyk.pages;
 import io.qameta.allure.Step;
 import lombok.AllArgsConstructor;
 import oleh.bilyk.helpers.EnumHelper;
-import oleh.bilyk.webDriver.DriverManager;
-import oleh.bilyk.webDriver.DriverWaiter;
-import org.apache.log4j.Logger;
+import oleh.bilyk.primitives.Button;
+import oleh.bilyk.primitives.TextField;
+import oleh.bilyk.primitives.TextView;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openqa.selenium.NoSuchElementException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,91 +18,66 @@ import org.springframework.stereotype.Component;
  * #Comments:
  */
 @Component
-public class LoginPage {
-    @Autowired
-    private DriverManager driverManager;
-    @Autowired
-    private DriverWaiter driverWaiter;
-    @Autowired
-    private Logger log;
+public class LoginPage extends BasePage {
+    public static final String PAGE_NAME = "Login Page";
+
     private static final By FIELD_USERNAME = By.cssSelector("input#login_field");
     private static final By FIELD_PASSWORD = By.cssSelector("input#password");
     private static final By BUTTON_SIGN_IN = By.cssSelector(".btn-primary");
     private static final By LABEL_ERROR_MESSAGE = By.cssSelector(".container-lg.px-2");
 
+    public TextField getFieldUsername() {
+        return context.getBean(TextField.class, FIELD_USERNAME, "Login page -> Username field");
+    }
+
+    public TextField getFieldPassword() {
+        return context.getBean(TextField.class, FIELD_PASSWORD, "Login page -> Password field");
+    }
+
+    public Button getButtonSignIn() {
+        return context.getBean(Button.class, BUTTON_SIGN_IN, "Login page -> Sign In button");
+    }
+
+    public TextView getLabelErrorMessage() {
+        return context.getBean(TextView.class, LABEL_ERROR_MESSAGE, "Login page -> Error message");
+    }
+
     //<editor-fold desc="Enums">
     @AllArgsConstructor
-    public enum LoginPageElement {
-        USERNAME("Username", FIELD_USERNAME),
-        PASSWORD("Password", FIELD_PASSWORD),
-        SIGN_IN("Sign In", BUTTON_SIGN_IN),
-        ERROR_MESSAGE("Error message", LABEL_ERROR_MESSAGE);
+    public enum LoginPageField {
+        FIELD_USERNAME("Username"),
+        FIELD_PASSWORD("Password");
 
         private final String name;
-        private final By by;
 
         @Override
         public String toString() {
             return name;
         }
-
-        public By getLocator() {
-            return by;
-        }
     }
     //</editor-fold>
 
     //<editor-fold desc="Public Methods">
-    public WebElement getElement(String name) {
-        LoginPageElement loginPageElement = EnumHelper.valueOf(LoginPage.LoginPageElement.class, name);
-        return driverManager.getDriver().findElement(loginPageElement.getLocator());
+
+    public TextField getFieldByName(String fieldName) {
+        LoginPageField field = EnumHelper.valueOf(LoginPageField.class, fieldName);
+        switch (field) {
+            case FIELD_USERNAME:
+                return getFieldUsername();
+            case FIELD_PASSWORD:
+                return getFieldPassword();
+            default:
+                throw new NoSuchElementException(String.format("Button with name '%s' does not much to any on page.", fieldName));
+        }
     }
 
-    @Step("Type '{0}' to username field")
-    public void fillUsernameField(String username) {
-        driverManager.getDriver().findElement(FIELD_USERNAME).sendKeys(username);
-    }
-
-    @Step("Type '{0}' to password field")
-    public void fillPasswordField(String password) {
-        driverManager.getDriver().findElement(FIELD_PASSWORD).sendKeys(password);
-    }
-
-    @Step
-    public void clickOnSignInButton() {
-        driverManager.getDriver().findElement(BUTTON_SIGN_IN).click();
-    }
-
-    @Step
-    public boolean isLoginErrorMessageDisplayed() {
-        return driverWaiter.isElementDisplayed(LABEL_ERROR_MESSAGE, 1000);
-    }
-
-    @Step
-    public String getLoginErrorText() {
-        driverWaiter.waitForElementDisplayed(LABEL_ERROR_MESSAGE, 1000);
-        return driverManager.getDriver().findElement(LABEL_ERROR_MESSAGE).getText();
-    }
-
+    @Override
     @Step("Verify that Login page is loaded")
     public boolean verify() {
-        try {
-            return driverManager.getDriver().findElement(FIELD_USERNAME).isDisplayed()
-                    && driverManager.getDriver().findElement(BUTTON_SIGN_IN).isDisplayed();
-        } catch (Exception e) {
-            log.info(e.getMessage());
-        }
-        return false;
+        return getFieldUsername().isDisplayed()
+                && getButtonSignIn().isDisplayed();
     }
 
-    @Step
-    public void navigateToLoginPage() {
-        driverWaiter.waitForElementIsNotDisplayed(BUTTON_SIGN_IN, 1000);
-    }
 
-    @Step("Wait until leave the Login page")
-    public void waitUntilLeave() {
-        driverWaiter.waitForElementIsNotDisplayed(BUTTON_SIGN_IN, 1000);
-    }
     //</editor-fold>
 }

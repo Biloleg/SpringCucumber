@@ -1,13 +1,12 @@
 package oleh.bilyk.pages;
 
 import io.qameta.allure.Step;
-import oleh.bilyk.webDriver.DriverManager;
-import oleh.bilyk.webDriver.DriverWaiter;
-import org.apache.log4j.Logger;
+import oleh.bilyk.primitives.BaseElement;
+import oleh.bilyk.primitives.Button;
 import org.openqa.selenium.By;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 
 /**
  * #Summary:
@@ -17,45 +16,47 @@ import org.springframework.stereotype.Component;
  * #Comments:
  */
 @Component
-public class InitPage {
+public class InitPage extends BasePage {
+    public static final String PAGE_NAME = "Init Page";
+
     @Value("${base.url}")
     private String baseUrl;
-    @Autowired
-    private DriverManager driverManager;
-    @Autowired
-    private DriverWaiter driverWaiter;
-    @Autowired
-    private Logger log;
+
     private static final By BUTTON_SIGN_IN = By.cssSelector(".HeaderMenu-link.mr-3.no-underline");
     private static final By IMAGE_LOGO = By.cssSelector(".octicon.octicon-mark-github.text-white");
 
-    public void invoke() {
-        if (!verify()) {
-            driverManager.getDriver().navigate().to(baseUrl);
-            driverWaiter.waitForElementDisplayed(BUTTON_SIGN_IN);
-        }
+    public BaseElement getImageLogo() {
+        return context.getBean(BaseElement.class, IMAGE_LOGO, "Init Page -> Logo");
+    }
+
+    public Button getButtonSignIn() {
+        return context.getBean(Button.class, BUTTON_SIGN_IN, "Init Page -> Sign In button");
     }
 
     //<editor-fold desc="Public Methods">
+    public void invoke() {
+        if (!verify()) {
+            driverManager.getDriver().navigate().to(baseUrl);
+            getImageLogo().waitToDisplayed();
+        }
+    }
+
+    @Override
     @Step("Verify that Main page is loaded")
     public boolean verify() {
-        try {
-            return driverManager.getDriver().findElement(IMAGE_LOGO).isDisplayed()
-                    && driverManager.getDriver().findElement(BUTTON_SIGN_IN).isDisplayed();
-        } catch (Exception e) {
-            log.info(e.getMessage());
-        }
-        return false;
+        return getImageLogo().isDisplayed(1000)
+                && getButtonSignIn().isDisplayed(1000);
     }
 
     @Step
     public void navigateToLoginPage() {
-        driverManager.getDriver().findElement(BUTTON_SIGN_IN).click();
+        getButtonSignIn().click();
+        getButtonSignIn().waitToNotDisplayed();
     }
 
     @Step("Wait until leave the Main page")
     public void waitUntilLeave() {
-        driverWaiter.waitForElementIsNotDisplayed(BUTTON_SIGN_IN, 1000);
+        getButtonSignIn().waitToNotDisplayed();
     }
     //</editor-fold>
 }

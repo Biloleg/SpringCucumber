@@ -1,12 +1,11 @@
 package oleh.bilyk.pages;
 
 import io.qameta.allure.Step;
-import oleh.bilyk.webDriver.DriverManager;
-import oleh.bilyk.webDriver.DriverWaiter;
-import org.apache.log4j.Logger;
+import oleh.bilyk.components.RepoListItemComponent;
+import oleh.bilyk.primitives.BaseElement;
+import oleh.bilyk.primitives.Button;
+import oleh.bilyk.primitives.TextField;
 import org.openqa.selenium.By;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,45 +16,40 @@ import org.springframework.stereotype.Component;
  * #Comments:
  */
 @Component
-public class MainPage {
-    @Value("${base.url}")
-    private String baseUrl;
-    @Autowired
-    private DriverManager driverManager;
-    @Autowired
-    private DriverWaiter driverWaiter;
-    @Autowired
-    private Logger log;
-    private static final By BUTTON_SIGN_IN = By.cssSelector(".HeaderMenu-link.mr-3.no-underline");
-    private static final By IMAGE_LOGO = By.cssSelector(".octicon.octicon-mark-github.text-white");
+public class MainPage extends BasePage {
+    public static final String PAGE_NAME = "Main Page";
 
-    public void invoke() {
-        if (!verify()) {
-            driverManager.getDriver().navigate().to(baseUrl);
-            driverWaiter.waitForElementDisplayed(BUTTON_SIGN_IN);
-        }
+    private static final By IMAGE_AVATAR = By.cssSelector("summary .avatar-user");
+    private static final By FIELD_SEARCH = By.cssSelector("input[name='q']");
+    private static final By FIELD_NOT_FOUND = By.cssSelector("Biloleg/SpringCucumber");
+    private static final By ELEMENT_REPO_LIST = By.cssSelector(".repo-list");
+    private static final By ELEMENT_REPO_LIST_ITEM = By.cssSelector(".repo-list-item");
+
+    public BaseElement getElementRepoList() {
+        return context.getBean(BaseElement.class, ELEMENT_REPO_LIST, "Repo List -> Container ");
+    }
+
+    public BaseElement getImageAvatar(){
+        return context.getBean(BaseElement.class, IMAGE_AVATAR, "Main Page -> Avatar");
+    }
+
+    public TextField getFieldSearch(){
+        return context.getBean(TextField.class, FIELD_SEARCH, "Main Page -> Search Field");
+    }
+
+    public TextField getFieldNotFound (){
+        return context.getBean(TextField.class, FIELD_NOT_FOUND, "Main Page -> Not Found Field");
     }
 
     //<editor-fold desc="Public Methods">
+    @Override
     @Step("Verify that Main page is loaded")
     public boolean verify() {
-        try {
-            return driverManager.getDriver().findElement(IMAGE_LOGO).isDisplayed()
-                    && driverManager.getDriver().findElement(BUTTON_SIGN_IN).isDisplayed();
-        } catch (Exception e) {
-            log.info(e.getMessage());
-        }
-        return false;
+        return getImageAvatar().isDisplayed(1000)
+                && getFieldSearch().isDisplayed(1000);
     }
 
-    @Step
-    public void navigateToLoginPage() {
-        driverWaiter.waitForElementIsNotDisplayed(BUTTON_SIGN_IN, 1000);
-    }
-
-    @Step("Wait until leave the Main page")
-    public void waitUntilLeave() {
-        driverWaiter.waitForElementIsNotDisplayed(BUTTON_SIGN_IN, 1000);
+    public RepoListItemComponent getRepoListItemById(int id){
     }
     //</editor-fold>
 }
