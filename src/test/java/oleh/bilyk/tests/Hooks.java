@@ -31,11 +31,11 @@ public class Hooks {
     @Before
     public void writeEnvironmentProp() {
         if (isFirstTest) {
+            isFirstTest = false;
             allureEnvironmentWriter.write("OS", System.getProperty("os.name"));
             allureEnvironmentWriter.write("Java ver.", System.getProperty("java.version"));
             allureEnvironmentWriter.write("Browser", browser);
             allureEnvironmentWriter.write("Base URL", baseUrl);
-            isFirstTest = false;
         }
     }
 

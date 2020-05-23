@@ -9,6 +9,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -28,6 +29,8 @@ public abstract class AbstractElement {
     protected DriverWaiter driverWaiter;
     @Autowired
     protected Logger log;
+    @Value("${highlight.color}")
+    String highlightColor;
     @Getter
     protected By locator;
     @Getter
@@ -76,7 +79,7 @@ public abstract class AbstractElement {
         unhighlightLast();
         lastElem.set(elem);
         lastBorder.set((String) (getJsExecutor().executeScript("arguments[0].setAttribute('style', arguments[1]);",
-                elem, "color: red; border: 2px solid red;")));
+                elem, String.format("color: %1$s; border: 2px solid %1$s;", highlightColor))));
     }
 
     private void unhighlightLast() {
