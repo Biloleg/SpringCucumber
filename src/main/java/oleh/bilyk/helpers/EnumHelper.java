@@ -1,8 +1,5 @@
 package oleh.bilyk.helpers;
 
-import java.util.EnumSet;
-import java.util.Random;
-
 /**
  * #Summary:
  * #Author: Oleh Bilyk

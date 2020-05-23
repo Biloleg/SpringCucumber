@@ -1,35 +1,33 @@
+@Search
 Feature: I verify login process with valid and not valid account
 
   Background:
     Given I open browser and navigate by configured URL
     When I navigate to Login page
     Then I check that "Login Page" is invoked
-    When I type "<account>" to "Username" field on Login page
-    And I type "<password>" to "Password" field on Login page
+    When I type "springTest388" to "Username" field on Login page
+    And I type "Spr1ngT3st" to "Password" field on Login page
     And I click 'Sign In' button on Login page
     Then I check that "Main Page" is invoked
 
+  @Negative
   Scenario Outline: Search not existed repository
-    Given I type "aaaaaaaaaaaaaaaaaaaa" to Search field on Main page and confirm
-    And I type "<password>" to "Password" field on Login page
-    And I click 'Sign In' button on Login page
-    Then I check that Error Login message is "displayed" on Login page
-    Then I check that Error login message has text:
+    Given I type "<repoName>" to Search field on Main page and confirm
+    Then I check that 'Not Found' message is "displayed" on Main page
+    Then I check that 'Not Found' message has text:
     """
-    Incorrect username or password.
+    We couldn’t find any repositories matching '<repoName>'
     """
     Examples:
-      | account         | password      |
-      | wrongUsername   | wrongPassword |
-      | wrong@email.com | wrongPassword |
+      | repoName                   |
+      | sddsgdsdsfgdfdhgfhcdfghchf |
 
-  Scenario Outline: Login with valid credentials
-    Given I type "<account>" to "Username" field on Login page
-    And I type "<password>" to "Password" field on Login page
-    And I click 'Sign In' button on Login page
-    Then I check that Error Login message is "not displayed" on Login page
-    Then I check that "Main Page" is invoked
+  @Positive
+  Scenario Outline: Search existed repository
+    Given I type "<repoName>" to Search field on Main page and confirm
+    Then I check that 'Not Found' message is "not displayed" on Main page
+    Then I check that repo with link "<repoOwner>/<repoName>" is "present" in repo list on Main page
+    Then I check that repo with link "<repoOwner>/<repoName>" has "Java" program language in repo list on Main page
     Examples:
-      | account                 | password   |
-      | springTest388           | Spr1ngT3st |
-      | springTest388@gmail.com | Spr1ngT3st |
+      | repoOwner | repoName       |
+      | Biloleg   | springCucumber |

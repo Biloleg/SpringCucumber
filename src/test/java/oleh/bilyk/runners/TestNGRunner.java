@@ -15,11 +15,11 @@ import org.testng.annotations.DataProvider;
         features = {"src/test/resources/cucumber/"},
         glue = "oleh.bilyk.tests",
         strict = true
-        )
+)
 
 public class TestNGRunner extends AbstractTestNGCucumberTests {
     @Override
-    @DataProvider(parallel = false)
+    @DataProvider(parallel = true)
     public Object[][] scenarios() {
         return super.scenarios();
     }

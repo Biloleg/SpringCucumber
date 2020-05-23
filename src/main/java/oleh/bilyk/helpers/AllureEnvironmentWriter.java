@@ -3,6 +3,7 @@ package oleh.bilyk.helpers;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,13 +18,14 @@ import java.util.Properties;
  * #Creation Date: 20/05/2020
  * #Comments:
  */
+@Component
 public class AllureEnvironmentWriter {
     @Autowired
-    private static Logger log;
+    private Logger log;
     @Value("${allure.prop.file}")
-    private static String pathToPropFile;
+    private String pathToPropFile;
 
-    public static synchronized void write(String propName, String propValue) {
+    public void write(String propName, String propValue) {
         Properties prop = new Properties();
         try (FileInputStream inputStream = new FileInputStream(pathToPropFile)) {
             prop.load(inputStream);
@@ -33,7 +35,6 @@ public class AllureEnvironmentWriter {
                     .getParentFile()
                     .mkdirs();
         }
-
         try (FileOutputStream outputStream = new FileOutputStream(pathToPropFile)) {
             prop.put(propName, propValue);
             prop.store(outputStream, null);

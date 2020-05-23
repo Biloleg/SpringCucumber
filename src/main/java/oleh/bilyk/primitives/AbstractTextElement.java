@@ -1,21 +1,14 @@
 package oleh.bilyk.primitives;
 
-import lombok.Getter;
-import oleh.bilyk.webDriver.DriverManager;
-import oleh.bilyk.webDriver.DriverWaiter;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-
+/**
+ * #Summary:
+ * #Author: Oleh_Bilyk
+ * #Author’s Email: oleh_bilyk@epam.com
+ * #Creation Date: 23/05/2020
+ * #Comments:
+ */
 public abstract class AbstractTextElement extends AbstractElement {
     public AbstractTextElement(By locator, String description) {
         super(locator, description);

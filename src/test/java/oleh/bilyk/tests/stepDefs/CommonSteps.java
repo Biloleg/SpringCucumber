@@ -8,6 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 
+/**
+ * #Summary:
+ * #Author: Oleh_Bilyk
+ * #Author’s Email: oleh_bilyk@epam.com
+ * #Creation Date: 23/05/2020
+ * #Comments:
+ */
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class CommonSteps {
     @Autowired

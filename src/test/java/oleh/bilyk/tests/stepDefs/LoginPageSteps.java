@@ -6,6 +6,13 @@ import oleh.bilyk.pages.LoginPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 
+/**
+ * #Summary:
+ * #Author: Oleh_Bilyk
+ * #Author’s Email: oleh_bilyk@epam.com
+ * #Creation Date: 23/05/2020
+ * #Comments:
+ */
 public class LoginPageSteps {
     @Autowired
     private LoginPage loginPage;

@@ -6,6 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+/**
+ * #Summary:
+ * #Author: Oleh_Bilyk
+ * #Author’s Email: oleh_bilyk@epam.com
+ * #Creation Date: 23/05/2020
+ * #Comments:
+ */
 @Component
 public class PageFactory {
     @Autowired

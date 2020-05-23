@@ -1,5 +1,6 @@
 package oleh.bilyk.webDriver;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -11,7 +12,6 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import org.apache.log4j.Logger;
 
 /**
  * #Summary:

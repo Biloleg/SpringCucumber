@@ -4,6 +4,13 @@ import io.cucumber.java.en.When;
 import oleh.bilyk.pages.InitPage;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * #Summary:
+ * #Author: Oleh_Bilyk
+ * #Author’s Email: oleh_bilyk@epam.com
+ * #Creation Date: 23/05/2020
+ * #Comments:
+ */
 public class InitPageSteps {
     @Autowired
     private InitPage initPage;

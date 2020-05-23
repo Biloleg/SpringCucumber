@@ -12,6 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+/**
+ * #Summary:
+ * #Author: Oleh_Bilyk
+ * #Author’s Email: oleh_bilyk@epam.com
+ * #Creation Date: 23/05/2020
+ * #Comments:
+ */
 public abstract class AbstractElement {
     private static ThreadLocal<WebElement> lastElem = new ThreadLocal<>();
     private static ThreadLocal<String> lastBorder = new ThreadLocal<>();
@@ -69,7 +76,7 @@ public abstract class AbstractElement {
         unhighlightLast();
         lastElem.set(elem);
         lastBorder.set((String) (getJsExecutor().executeScript("arguments[0].setAttribute('style', arguments[1]);",
-                elem, "color: yellow; border: 2px solid yellow;")));
+                elem, "color: red; border: 2px solid red;")));
     }
 
     private void unhighlightLast() {
