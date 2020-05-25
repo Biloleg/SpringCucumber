@@ -26,20 +26,22 @@ public class AllureEnvironmentWriter {
     private String pathToPropFile;
 
     public void write(String propName, String propValue) {
-        Properties prop = new Properties();
-        try (FileInputStream inputStream = new FileInputStream(pathToPropFile)) {
-            prop.load(inputStream);
-        } catch (IOException e) {
-            log.warn(e.getMessage());
-            new File(pathToPropFile)
-                    .getParentFile()
-                    .mkdirs();
-        }
-        try (FileOutputStream outputStream = new FileOutputStream(pathToPropFile)) {
-            prop.put(propName, propValue);
-            prop.store(outputStream, null);
-        } catch (Exception e) {
-            log.warn(e.getMessage());
+        synchronized (AllureEnvironmentWriter.class) {
+            Properties prop = new Properties();
+            try (FileInputStream inputStream = new FileInputStream(pathToPropFile)) {
+                prop.load(inputStream);
+            } catch (IOException e) {
+                log.warn(e.getMessage());
+                new File(pathToPropFile)
+                        .getParentFile()
+                        .mkdirs();
+            }
+            try (FileOutputStream outputStream = new FileOutputStream(pathToPropFile)) {
+                prop.put(propName, propValue);
+                prop.store(outputStream, null);
+            } catch (Exception e) {
+                log.warn(e.getMessage());
+            }
         }
     }
 }
