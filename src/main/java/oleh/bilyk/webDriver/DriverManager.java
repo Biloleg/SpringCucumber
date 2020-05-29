@@ -9,8 +9,6 @@ import org.openqa.selenium.opera.OperaDriver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy;
-
 /**
  * #Summary:
  * #Author: Oleh_Bilyk
@@ -46,7 +44,6 @@ public class DriverManager {
         return driver.get();
     }
 
-    @PreDestroy
     public void kill() {
         driver.get().close();
         driver.get().quit();
