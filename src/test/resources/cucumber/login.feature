@@ -9,7 +9,7 @@ Feature: I verify login process with valid and not valid account
   @Negative
   Scenario Outline: Login with not valid credentials
     Given I type "<account>" to "Username" field on Login page
-    And I type "<password>" to "Password" field on Login page
+    When I type "<password>" to "Password" field on Login page
     And I click 'Sign In' button on Login page
     Then I check that Error Login message is "displayed" on Login page
     Then I check that Error login message has text:
@@ -18,6 +18,7 @@ Feature: I verify login process with valid and not valid account
     """
     Examples:
       | account         | password      |
+      | springTest388           | Spr1ngT3st |
       | wrongUsername   | wrongPassword |
       | wrong@email.com | wrongPassword |
 

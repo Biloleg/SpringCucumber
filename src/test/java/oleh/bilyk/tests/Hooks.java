@@ -4,6 +4,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import oleh.bilyk.helpers.AllureEnvironmentWriter;
+import oleh.bilyk.testrail.TestRailIntegration;
 import oleh.bilyk.webDriver.DriverManager;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -28,15 +29,18 @@ public class Hooks {
     private String baseUrl;
     private static boolean isFirstTest = true;
 
+    //<editor-fold desc="Public Methods">
     @Before
-    public void writeEnvironmentProp() {
+    public void init() {
         if (isFirstTest) {
             isFirstTest = false;
-            allureEnvironmentWriter.write("OS", System.getProperty("os.name"));
-            allureEnvironmentWriter.write("Java ver.", System.getProperty("java.version"));
-            allureEnvironmentWriter.write("Browser", browser);
-            allureEnvironmentWriter.write("Base URL", baseUrl);
+            writeEnvironmentProp();
         }
+    }
+
+    @After
+    public void after(Scenario scenario){
+        TestRailIntegration.write(scenario);
     }
 
     @After(order = 2)
@@ -51,4 +55,21 @@ public class Hooks {
     public void killDriver() {
         driverManager.kill();
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Private Methods">
+    private void writeEnvironmentProp() {
+        allureEnvironmentWriter.write("OS", System.getProperty("os.name"));
+        allureEnvironmentWriter.write("Java ver.", System.getProperty("java.version"));
+        allureEnvironmentWriter.write("Browser", browser);
+        allureEnvironmentWriter.write("Base URL", baseUrl);
+    }
+
+    private void initTestRail() {
+        allureEnvironmentWriter.write("OS", System.getProperty("os.name"));
+        allureEnvironmentWriter.write("Java ver.", System.getProperty("java.version"));
+        allureEnvironmentWriter.write("Browser", browser);
+        allureEnvironmentWriter.write("Base URL", baseUrl);
+    }
+    //</editor-fold>
 }
