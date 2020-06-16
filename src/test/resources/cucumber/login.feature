@@ -6,7 +6,7 @@ Feature: I verify login process with valid and not valid account
     When I navigate to Login page
     Then I check that "Login Page" is invoked
 
-  @Negative
+  @Negative @TestRailsId#104
   Scenario Outline: Login with not valid credentials
     Given I type "<account>" to "Username" field on Login page
     When I type "<password>" to "Password" field on Login page
@@ -18,11 +18,10 @@ Feature: I verify login process with valid and not valid account
     """
     Examples:
       | account         | password      |
-      | springTest388           | Spr1ngT3st |
       | wrongUsername   | wrongPassword |
       | wrong@email.com | wrongPassword |
 
-  @Positive
+  @Positive @TestRailsId#114
   Scenario Outline: Login with valid credentials
     Given I type "<account>" to "Username" field on Login page
     And I type "<password>" to "Password" field on Login page

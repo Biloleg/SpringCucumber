@@ -10,7 +10,7 @@ Feature: I verify login process with valid and not valid account
     And I click 'Sign In' button on Login page
     Then I check that "Main Page" is invoked
 
-  @Negative
+  @Negative @TestRailsId#115
   Scenario Outline: Search not existed repository
     Given I type "<repoName>" to Search field on Main page and confirm
     Then I check that 'Not Found' message is "displayed" on Main page
@@ -22,7 +22,7 @@ Feature: I verify login process with valid and not valid account
       | repoName                   |
       | sddsgdsdsfgdfdhgfhcdfghchf |
 
-  @Positive
+  @Positive @TestRailsId#116
   Scenario Outline: Search existed repository
     Given I type "<repoName>" to Search field on Main page and confirm
     Then I check that 'Not Found' message is "not displayed" on Main page

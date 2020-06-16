@@ -1,60 +1,65 @@
 package oleh.bilyk.testrail;
 
 import com.codepine.api.testrail.TestRail;
-import com.codepine.api.testrail.model.*;
+import com.codepine.api.testrail.model.Result;
+import com.codepine.api.testrail.model.ResultField;
+import com.codepine.api.testrail.model.Run;
 import io.cucumber.java.Scenario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
+/**
+ * #Summary:
+ * #Author: Oleh_Bilyk
+ * #Author’s Email: oleh_bilyk@epam.com
+ * #Creation Date: 16/06/2020
+ * #Comments:
+ */
 @Component
 public class TestRailIntegration {
     @Autowired
     private TestResults testResults;
-    static int projectId = 6;
-    static int suiteId = 10;
-    static int sectionId = 9;
-    // create a TestRail instance
-    static TestRail testRail = TestRail.builder("https://bilyk.testrail.io/", "oleh.bilyk@penske.com", "Mentoring1").applicationName("playground").build();
-    // add a new test suite
-    static Suite suite = testRail.suites().get(suiteId).execute();
-    // add a new section
-    static Section section = testRail.sections().get(sectionId).execute();
-    // add a new test run
-    static Run run = testRail.runs().add(projectId, new Run().setSuiteId(suiteId).setName("Weekly Regression")).execute();
-    static List<ResultField> customResultFields = testRail.resultFields().list().execute();
+    private TestRail testRail;
+    private Run run;
 
-    public static void main(String[] s) {
-
-// add a test case
-        List<CaseField> customCaseFields = testRail.caseFields().list().execute();
-        Case testCase = testRail.cases().list(projectId, customCaseFields).execute().get(5);
-        //Case testCase = testRail.cases().add(sectionId, new Case().setTitle("Several results"), customCaseFields).execute();
-
-// add test result
-        List<ResultField> customResultFields = testRail.resultFields().list().execute();
-        testRail.results().addForCase(run.getId(), testCase.getId(), new Result().setStatusId(5), customResultFields).execute();
-        List<Result> x = testRail.results().listForRun(run.getId(), customResultFields).execute();
-        testRail.results().addForCase(run.getId(), testCase.getId(), new Result().setStatusId(1), customResultFields).execute();
-
-// close the run
-        testRail.runs().close(run.getId()).execute();
-
+    @Autowired
+    public TestRailIntegration(@Value("${test.rails.url}") final String testrailsEndpoint,
+                               @Value("${test.rails.username}") final String testrailsUsername,
+                               @Value("${test.rails.password}") final String testrailsPassword,
+                               @Value("${test.rails.project.id}") final int projectId,
+                               @Value("${test.rails.suite.id}") final int suiteId) {
+        testRail = TestRail.builder(testrailsEndpoint, testrailsUsername, testrailsPassword).build();
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+        Date date = new Date();
+        String dateString = format.format(date);
+        String runName = "Automation " + dateString;
+        run = testRail.runs().add(projectId, new Run().setSuiteId(suiteId).setName(runName)).execute();
+        Runtime.getRuntime().addShutdownHook(new Thread(this::pushTestRailsResults));
     }
 
+    //<editor-fold desc="Public Methods">
     public void write(Scenario scenario) {
-        scenario.getStatus();
         testResults.addResult(scenario);
-
     }
-    {
-        List<CaseField> customCaseFields = testRail.caseFields().list().execute();
-        Case testCase = testRail.cases().get(61, customCaseFields).execute();
-        //Case testCase = testRail.cases().add(sectionId, new Case().setTitle("Several results"), customCaseFields).execute();
+    //</editor-fold>
 
-        testRail.results().addForCase(run.getId(), testCase.getId(), testResult, customResultFields).execute();
-
-
+    //<editor-fold desc="Private Methods">
+    private void pushTestRailsResults() {
+        List<ResultField> customResultFields = testRail.resultFields().list().execute();
+        Iterator<TestResult> testResultsIterator = testResults.getTestResults().iterator();
+        while (testResultsIterator.hasNext()) {
+            TestResult testResult = testResultsIterator.next();
+            int testCaseId = testResult.getTestId();
+            Result result = testResult.getResult();
+            testRail.results().addForCase(run.getId(), testCaseId, result, customResultFields).execute();
+        }
+        testRail.runs().close(run.getId()).execute();
     }
+    //</editor-fold>
 }

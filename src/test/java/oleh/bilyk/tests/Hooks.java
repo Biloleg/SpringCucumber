@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class Hooks {
     @Autowired
+    TestRailIntegration testRailIntegration;
+    @Autowired
     DriverManager driverManager;
     @Autowired
     AllureEnvironmentWriter allureEnvironmentWriter;
@@ -38,9 +40,9 @@ public class Hooks {
         }
     }
 
-    @After
-    public void after(Scenario scenario){
-        TestRailIntegration.write(scenario);
+    @After(order = 3)
+    public void after(Scenario scenario) {
+        testRailIntegration.write(scenario);
     }
 
     @After(order = 2)
@@ -59,13 +61,6 @@ public class Hooks {
 
     //<editor-fold desc="Private Methods">
     private void writeEnvironmentProp() {
-        allureEnvironmentWriter.write("OS", System.getProperty("os.name"));
-        allureEnvironmentWriter.write("Java ver.", System.getProperty("java.version"));
-        allureEnvironmentWriter.write("Browser", browser);
-        allureEnvironmentWriter.write("Base URL", baseUrl);
-    }
-
-    private void initTestRail() {
         allureEnvironmentWriter.write("OS", System.getProperty("os.name"));
         allureEnvironmentWriter.write("Java ver.", System.getProperty("java.version"));
         allureEnvironmentWriter.write("Browser", browser);

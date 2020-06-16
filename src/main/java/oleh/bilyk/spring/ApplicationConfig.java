@@ -1,10 +1,7 @@
 package oleh.bilyk.spring;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 /**
  * #Summary:
@@ -15,7 +12,11 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Configuration
 @ComponentScan(basePackages = "oleh.bilyk")
-@PropertySource("classpath:project.properties")
+@PropertySources({
+        @PropertySource("classpath:project.properties"),
+        @PropertySource("classpath:test.rails.properties")
+})
+@PropertySource({"classpath:project.properties", "classpath:test.rails.properties"})
 public class ApplicationConfig {
     @Bean
     public Logger log() {
